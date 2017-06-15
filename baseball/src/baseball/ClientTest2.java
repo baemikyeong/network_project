@@ -40,8 +40,12 @@ public class ClientTest2 {
 				
 				str = stdin.readLine();
 				
+				String h = "h";
+				String H = "H";
+				
 				if(str.length()<4){
 					if(str == "h" || str == "H"){
+					if(str.equals(h) || str.equals(H)){
 						SimpleChatClient client = new SimpleChatClient("localhost", 8888);
 						continue;
 					}

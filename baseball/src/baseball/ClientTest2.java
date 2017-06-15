@@ -24,7 +24,7 @@ public class ClientTest2 {
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			OutputStream os = socket.getOutputStream(); 
 			PrintWriter pw = new PrintWriter(os);
-			SimpleChatClient client = new SimpleChatClient("localhost", 8888);
+			
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("rmi서버에 올리는 중  ");
 			String a = socket.getLocalAddress().getHostAddress();
@@ -42,7 +42,7 @@ public class ClientTest2 {
 				
 				if(str.length()<4){
 					if(str == "h" || str == "H"){
-						
+						SimpleChatClient client = new SimpleChatClient("localhost", 8888);
 						continue;
 					}
 					System.out.println("4자리로 입력해주세요 >>");

@@ -47,7 +47,7 @@ public class ServerTest2 {
 	  *  클라이언트들이 보내온 값에 대한 처리값을 서버에서 관찰할 수 있도록 처리
 	 * @throws Exception 
 	  */
-	
+	//static InetAddress ipaddr;
 	public static void main(String[] args) throws Exception{
 		//
 
@@ -59,6 +59,7 @@ public class ServerTest2 {
 		//	server.readConsoleInput(server);
 			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
 			serverSocket = new ServerSocket(9000);
+
 			while(true){
 				  // 2. 클라이언트의 접속요청을 대기한다.
 				System.out.println("서버 접속 대기 중");
@@ -200,6 +201,8 @@ class EchoThread extends Thread{
 		serverSocketChannel.bind(new InetSocketAddress(port));
 		startAcceptingNewClient();
 		setUpGUI();
+		String addr = InetAddress.getLocalHost().getHostAddress();
+		incoming.append(addr);
 	//	readConsoleInput(this);
 	}
 

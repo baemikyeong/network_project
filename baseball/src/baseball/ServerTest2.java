@@ -16,8 +16,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
+
+import baseball.SimpleChatServer.SendButtonActivationListener;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 //import baseball.EchoThread.SimpleChatServer;
 
@@ -188,9 +199,50 @@ class EchoThread extends Thread{
 		}
 		serverSocketChannel.bind(new InetSocketAddress(port));
 		startAcceptingNewClient();
+		setUpGUI();
 	//	readConsoleInput(this);
 	}
 
+	public void setUpGUI() {
+		System.out.println("SimpleChatServer.setUpGUI");
+		JFrame frame = new JFrame();
+		incoming = new JTextArea(15, 30);
+		incoming.setLineWrap(true);
+		incoming.setWrapStyleWord(true);
+		incoming.setEditable(false);
+		JScrollPane scrollPane = new JScrollPane(incoming);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		messageBox = new JTextField(20);
+		broadcastButton = new JButton("Broadcast");
+		JPanel mainPanel = new JPanel();
+		mainPanel.add(scrollPane);
+		mainPanel.add(messageBox);
+		mainPanel.add(broadcastButton);
+		broadcastButton.addActionListener(new SendButtonActivationListener());
+		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+		frame.pack();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+	}
+	public class SendButtonActivationListener implements ActionListener {
+		
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String text = messageBox.getText();
+			if (text.length() > 0) {
+				System.out.println("messageBox.getText()1 = " + text);
+
+				incoming.append(text);
+				broadcastMessage(text);
+				messageBox.setText("");
+			}
+			messageBox.requestFocus();
+		}
+	}
+	/*
 	public static void readConsoleInput(SimpleChatServer server) {// 내 생각엔 브로드캐스팅
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
@@ -202,7 +254,7 @@ class EchoThread extends Thread{
 			e.printStackTrace();
 		}
 	}
-
+*/
 	public void startAcceptingNewClient() throws IOException {
 		System.out.println("SimpleChatServer.startAcceptingNewClient");
 		serverSocketChannel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {

@@ -29,20 +29,11 @@ public class SimpleChatClient {
 	public SimpleChatClient(String address, int cPort) {
 		this.Port = cPort;
 		this.sAddr = address;
-		//SimpleChatClient client = new SimpleChatClient("localhost", 8888);
 		setUpGUI();
 		establishConnection();
 		System.out.println("Setup Finished");
 	}
-/*
-	public static void main(String[] args) {
-		SimpleChatClient client = new SimpleChatClient("localhost", 8888);
-		client.setUpGUI();
-		client.establishConnection();
-		//client.listenToIncomingMessages();
-		System.out.println("Setup Finished");
-	}
-*/
+
 	public void establishConnection() {
 		try {
 			System.out.println("SimpleChatClient.establishConnection");
@@ -62,7 +53,6 @@ public class SimpleChatClient {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					
 					receive(); // 서버에서 보낸 데이터 받기!!!!!!!!
 					
 				}
@@ -128,7 +118,6 @@ public class SimpleChatClient {
 	public void send(String data) {
 		Charset charset = Charset.forName("utf-8");
 		ByteBuffer byteBuffer = charset.encode(data);
-		//byteBuffer.flip();
 		
 		socketChannel.write(byteBuffer, null, new CompletionHandler<Integer, Void>() {
 			@Override

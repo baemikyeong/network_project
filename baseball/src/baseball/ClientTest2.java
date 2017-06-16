@@ -30,7 +30,7 @@ public class ClientTest2 {
 			System.out.println("서버와 연결 중 ...");
 			socket = new Socket("localhost", 9000);
 			System.out.println("서버에서 확인 중 ");
-			SimpleChatClient client1 = new SimpleChatClient("localhost", 8888);
+			//SimpleChatClient client1 = new SimpleChatClient("localhost", 8888);
 			InputStream is = socket.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			OutputStream os = socket.getOutputStream();
@@ -39,10 +39,12 @@ public class ClientTest2 {
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("rmi서버에 올리는 중  ");
 			String a = socket.getLocalAddress().getHostAddress();
+			int socket_port = socket.getLocalPort();
 			String b = "Game";
 			Game zz = new GameImpl(); // 야구게임 클래스 객체 생성
-			LocateRegistry.createRegistry(1099);
-			Naming.rebind("rmi://" + a + ":1099/" + b, zz);
+			LocateRegistry.createRegistry(socket_port);
+			
+			Naming.rebind("rmi://" + a + ":" + Integer.toString(socket_port) +"/" + b, zz);
 
 			String str = "", str1 = "";
 			System.out.println("게임을 시작하겠습니다 ");

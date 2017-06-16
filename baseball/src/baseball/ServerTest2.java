@@ -123,6 +123,7 @@ class EchoThread extends Thread{
 			int x,y;
 			System.out.println("rmi call   ");
 			String a = socket.getInetAddress().getHostAddress();
+			int s = socket.getPort();
 			String b = "Game";
 			Game c = (Game)Naming.lookup("rmi://"+a+"/"+b);
 			c.randomInt();

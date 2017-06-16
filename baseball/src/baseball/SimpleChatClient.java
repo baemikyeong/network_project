@@ -158,7 +158,7 @@ public class SimpleChatClient {
 		sendButton = new JButton("Send");
 		hintButton = new JButton("Hint");
 		JPanel mainPanel = new JPanel();
-<<<<<<< HEAD
+
 		JPanel subPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		subPanel.setLayout(new BorderLayout());
@@ -166,14 +166,9 @@ public class SimpleChatClient {
 		subPanel.add("Center", messageBox);
 		subPanel.add("East", sendButton);
 		subPanel.add("South", hintButton);
-=======
-		mainPanel.add(scrollPane);
-		mainPanel.add(messageBox);
-		
-		mainPanel.add(sendButton);
->>>>>>> 0306ab12a2190005a6652c92d858a8f33747550c
+
 		sendButton.addActionListener(new SendButtonActivationListener());
-		hintButton.addActionListener(new helpButtonActivationListener());
+		hintButton.addActionListener(new HintButtonActivationListener());
 		messageBox.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
 		frame.getContentPane().add(BorderLayout.SOUTH, subPanel);
@@ -213,16 +208,7 @@ public class SimpleChatClient {
 		}
 	}
 	
-<<<<<<< HEAD
-public class helpButtonActivationListener implements ActionListener {
-		
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			
-		}
-	}
-=======
+
 public class HintButtonActivationListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -230,6 +216,5 @@ public class HintButtonActivationListener implements ActionListener {
 		}
 	}
 
->>>>>>> 0306ab12a2190005a6652c92d858a8f33747550c
 
 }

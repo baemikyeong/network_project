@@ -98,7 +98,7 @@ class EchoThread extends Thread{
 	OutputStream os=null;
 	PrintWriter pw=null;
 	EchoThread(){}
-	EchoThread(Socket socket) throws NotBoundException, RemoteException{
+	EchoThread(Socket socket) throws NotBoundException{
 		this.socket = socket;
 		try{
 			   // 3. 소켓으로 부터 송수신을 위한 i/o stream 을 얻기

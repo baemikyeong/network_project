@@ -23,13 +23,14 @@ public class ClientTest2 {
 
 	public static void main(String[] args) {
 		Socket socket = null;
-
+		String atr = args[0];
 		try {
 
 			System.out.println("서버와 연결 중 ...");
+			
 			socket = new Socket("localhost", 9000);
 			System.out.println("서버에서 확인 중 ");
-
+		
 			InputStream is = socket.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			OutputStream os = socket.getOutputStream();
@@ -55,6 +56,7 @@ public class ClientTest2 {
 				if (str.length() < 4) {
 					if (str.equals(h) || str.equals(H)) {
 						SimpleChatClient client = new SimpleChatClient("localhost", 8888);
+						
 						continue;
 					}
 					System.out.println("4자리로 입력해주세요 >>");

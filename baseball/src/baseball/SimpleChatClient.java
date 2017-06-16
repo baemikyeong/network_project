@@ -8,7 +8,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.BindException;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -23,6 +25,7 @@ public class SimpleChatClient {
 	private JButton hintButton;
 	private BufferedReader reader;
 	private PrintWriter writer;
+	private boolean selfChecking;
 
 	AsynchronousChannelGroup channelGroup; // 비동기 채널 그룹 필드 선언
 	AsynchronousSocketChannel socketChannel;
@@ -32,6 +35,8 @@ public class SimpleChatClient {
 	public SimpleChatClient(String address, int cPort) {
 		this.Port = cPort;
 		this.sAddr = address;
+		selfChecking = true;// 디폴트를 true 이미지 receiver가 기본
+
 		setUpGUI();
 		establishConnection();
 		System.out.println("Setup Finished");
@@ -49,24 +54,24 @@ public class SimpleChatClient {
 			socketChannel.connect(new InetSocketAddress(sAddr, Port), null, new CompletionHandler<Void, Void>() {
 				@Override
 				public void completed(Void result, Void attachment) {
-					
+
 					try {
-							System.out.println("[연결 완료: " + socketChannel.getRemoteAddress() + "]");
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						System.out.println("[연결 완료: " + socketChannel.getRemoteAddress() + "]");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					receive(); // 서버에서 보낸 데이터 받기!!!!!!!!
-					
+
 				}
-				
+
 				@Override
 				public void failed(Throwable e, Void attachment) {
 					System.out.println("[서버 통신 안됨]");
 					if (socketChannel.isOpen()) {
 						try {
 							System.out.println("[연결 끊음]");
-						
+
 							if (channelGroup != null && !channelGroup.isShutdown()) {
 								channelGroup.shutdownNow(); // 비동기 채널 그룹에 포함된 모든
 															// 비동기 채널 닫음.
@@ -83,21 +88,42 @@ public class SimpleChatClient {
 
 	public void receive() {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(100);
-		
+
 		socketChannel.read(byteBuffer, byteBuffer, new CompletionHandler<Integer, ByteBuffer>() {
 			@Override
 			public void completed(Integer result, ByteBuffer attachment) {
 				try {
 					attachment.flip();
-					
+
 					Charset charset = Charset.forName("utf-8");
 					String data = charset.decode(attachment).toString();
+					if (data.equals("please,restart the receiver")) {
+						if (selfChecking == true) {
+							if (Server.checking == true){
+								Server.main(null);
+							    send("I am ready"); 
+							}
+							
+							/*
+							 * Server s = new Server(); s.main(null);
+							 */
+							//Client.startImageSend();
+						}else if(data.equals("Set, client Server")) {
+							if(selfChecking==false){
+								Client.startImageSend();
+							}
+						}
+						else {
+							return;
+						}
+					}
 					System.out.println("[From Server to Client : ] " + data);
 					incoming.append(data);
 					incoming.append("\n");
 					ByteBuffer byteBuffer = ByteBuffer.allocate(100);
-					socketChannel.read(byteBuffer, byteBuffer, this);//receive() 재호출한구얌
-				
+					socketChannel.read(byteBuffer, byteBuffer, this);// receive()
+																		// 재호출한구얌
+
 				} catch (Exception e) {
 				}
 			}
@@ -121,7 +147,7 @@ public class SimpleChatClient {
 	public void send(String data) {
 		Charset charset = Charset.forName("utf-8");
 		ByteBuffer byteBuffer = charset.encode(data);
-		
+
 		socketChannel.write(byteBuffer, null, new CompletionHandler<Integer, Void>() {
 			@Override
 			public void completed(Integer result, Void attachment) {
@@ -147,7 +173,7 @@ public class SimpleChatClient {
 	public void setUpGUI() {
 		System.out.println("SimpleChatClient.setUpGUI");
 		JFrame frame = new JFrame();
-		incoming = new JTextArea(50, 50);
+		incoming = new JTextArea(15, 30);
 		incoming.setLineWrap(true);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
@@ -159,27 +185,24 @@ public class SimpleChatClient {
 		JPanel mainPanel = new JPanel();
 		mainPanel.add(scrollPane);
 		mainPanel.add(messageBox);
-		
+
 		mainPanel.add(sendButton);
 		sendButton.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
+
 		hintButton = new JButton("Hint");
 		mainPanel.add(hintButton);
 		hintButton.setVisible(true);
-		hintButton.setBounds(125,15,50,50);
+		hintButton.setBounds(125, 15, 50, 50);
 		hintButton.addActionListener(new HintButtonActivationListener());
-		
-		
 
 	}
 
 	public class SendButtonActivationListener implements ActionListener {
-		
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String text = messageBox.getText();
@@ -187,19 +210,29 @@ public class SimpleChatClient {
 				System.out.println("messageBox.getText()1 = " + text);
 
 				send(text);
-	
+
 				messageBox.setText("");
 			}
 			messageBox.requestFocus();
 		}
 	}
-	
-public class HintButtonActivationListener implements ActionListener {
+
+	public class HintButtonActivationListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//////
+			// Hint버튼 누르면 수행
+			selfChecking = false;// 도움을 청하는 sender
+			send("please,start the receiver");
+
+		//	Server.main(null);
+
+			/*
+			 * try { Client.client_work("127.0.0.1"); Client.startImageSend(); }
+			 * catch (UnknownHostException e1) { // TODO Auto-generated catch
+			 * block e1.printStackTrace(); }
+			 */
+
 		}
 	}
-
 
 }

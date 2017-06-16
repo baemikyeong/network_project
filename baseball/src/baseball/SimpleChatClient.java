@@ -144,7 +144,8 @@ public class SimpleChatClient {
 
 	}
 
-	public void send(String data) {
+	public void send(String data) throws IOException {
+		data = "[" + socketChannel.getLocalAddress().toString() + "]" + data;
 		Charset charset = Charset.forName("utf-8");
 		ByteBuffer byteBuffer = charset.encode(data);
 
@@ -173,7 +174,10 @@ public class SimpleChatClient {
 	public void setUpGUI() {
 		System.out.println("SimpleChatClient.setUpGUI");
 		JFrame frame = new JFrame();
+<<<<<<< HEAD
 		incoming = new JTextArea(15, 30);
+=======
+>>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 		incoming.setLineWrap(true);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
@@ -182,13 +186,29 @@ public class SimpleChatClient {
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		messageBox = new JTextField(20);
 		sendButton = new JButton("Send");
+		hintButton = new JButton("Hint");
 		JPanel mainPanel = new JPanel();
+<<<<<<< HEAD
 		mainPanel.add(scrollPane);
 		mainPanel.add(messageBox);
 
 		mainPanel.add(sendButton);
+=======
+
+		JPanel subPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		subPanel.setLayout(new BorderLayout());
+		mainPanel.add("Center", scrollPane);
+		subPanel.add("Center", messageBox);
+		subPanel.add("East", sendButton);
+		subPanel.add("South", hintButton);
+
+>>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 		sendButton.addActionListener(new SendButtonActivationListener());
+		hintButton.addActionListener(new HintButtonActivationListener());
+		messageBox.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+		frame.getContentPane().add(BorderLayout.SOUTH, subPanel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -209,15 +229,31 @@ public class SimpleChatClient {
 			if (text.length() > 0) {
 				System.out.println("messageBox.getText()1 = " + text);
 
+<<<<<<< HEAD
 				send(text);
 
+=======
+				try {
+					send(text);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	
+>>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 				messageBox.setText("");
 			}
 			messageBox.requestFocus();
 		}
 	}
+<<<<<<< HEAD
 
 	public class HintButtonActivationListener implements ActionListener {
+=======
+	
+
+public class HintButtonActivationListener implements ActionListener {
+>>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Hint버튼 누르면 수행

@@ -2,6 +2,8 @@ package baseball;
 
 import javax.swing.*;
 
+import baseball.SimpleChatServer.SendButtonActivationListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +20,7 @@ public class SimpleChatClient {
 	private JTextArea incoming;
 	private JTextField messageBox;
 	private JButton sendButton;
+	private JButton hintButton;
 	private BufferedReader reader;
 	private PrintWriter writer;
 
@@ -144,7 +147,7 @@ public class SimpleChatClient {
 	public void setUpGUI() {
 		System.out.println("SimpleChatClient.setUpGUI");
 		JFrame frame = new JFrame();
-		incoming = new JTextArea(15, 50);
+		incoming = new JTextArea(50, 50);
 		incoming.setLineWrap(true);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
@@ -156,12 +159,21 @@ public class SimpleChatClient {
 		JPanel mainPanel = new JPanel();
 		mainPanel.add(scrollPane);
 		mainPanel.add(messageBox);
+		
 		mainPanel.add(sendButton);
 		sendButton.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		hintButton = new JButton("Hint");
+		mainPanel.add(hintButton);
+		hintButton.setVisible(true);
+		hintButton.setBounds(125,15,50,50);
+		hintButton.addActionListener(new HintButtonActivationListener());
+		
+		
 
 	}
 
@@ -181,5 +193,13 @@ public class SimpleChatClient {
 			messageBox.requestFocus();
 		}
 	}
+	
+public class HintButtonActivationListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//////
+		}
+	}
+
 
 }

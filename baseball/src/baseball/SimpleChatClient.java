@@ -2,6 +2,8 @@ package baseball;
 
 import javax.swing.*;
 
+import baseball.SimpleChatServer.SendButtonActivationListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -146,7 +148,6 @@ public class SimpleChatClient {
 	public void setUpGUI() {
 		System.out.println("SimpleChatClient.setUpGUI");
 		JFrame frame = new JFrame();
-		incoming = new JTextArea(15, 50);
 		incoming.setLineWrap(true);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
@@ -157,6 +158,7 @@ public class SimpleChatClient {
 		sendButton = new JButton("Send");
 		hintButton = new JButton("Hint");
 		JPanel mainPanel = new JPanel();
+<<<<<<< HEAD
 		JPanel subPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		subPanel.setLayout(new BorderLayout());
@@ -164,6 +166,12 @@ public class SimpleChatClient {
 		subPanel.add("Center", messageBox);
 		subPanel.add("East", sendButton);
 		subPanel.add("South", hintButton);
+=======
+		mainPanel.add(scrollPane);
+		mainPanel.add(messageBox);
+		
+		mainPanel.add(sendButton);
+>>>>>>> 0306ab12a2190005a6652c92d858a8f33747550c
 		sendButton.addActionListener(new SendButtonActivationListener());
 		hintButton.addActionListener(new helpButtonActivationListener());
 		messageBox.addActionListener(new SendButtonActivationListener());
@@ -172,6 +180,14 @@ public class SimpleChatClient {
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		hintButton = new JButton("Hint");
+		mainPanel.add(hintButton);
+		hintButton.setVisible(true);
+		hintButton.setBounds(125,15,50,50);
+		hintButton.addActionListener(new HintButtonActivationListener());
+		
+		
 
 	}
 
@@ -197,6 +213,7 @@ public class SimpleChatClient {
 		}
 	}
 	
+<<<<<<< HEAD
 public class helpButtonActivationListener implements ActionListener {
 		
 		
@@ -205,5 +222,14 @@ public class helpButtonActivationListener implements ActionListener {
 			
 		}
 	}
+=======
+public class HintButtonActivationListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//////
+		}
+	}
+
+>>>>>>> 0306ab12a2190005a6652c92d858a8f33747550c
 
 }

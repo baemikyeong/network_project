@@ -18,6 +18,7 @@ public class SimpleChatClient {
 	private JTextArea incoming;
 	private JTextField messageBox;
 	private JButton sendButton;
+	private JButton hintButton;
 	private BufferedReader reader;
 	private PrintWriter writer;
 
@@ -115,7 +116,8 @@ public class SimpleChatClient {
 
 	}
 
-	public void send(String data) {
+	public void send(String data) throws IOException {
+		data = "[" + socketChannel.getLocalAddress().toString() + "]" + data;
 		Charset charset = Charset.forName("utf-8");
 		ByteBuffer byteBuffer = charset.encode(data);
 		
@@ -153,12 +155,20 @@ public class SimpleChatClient {
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		messageBox = new JTextField(20);
 		sendButton = new JButton("Send");
+		hintButton = new JButton("Hint");
 		JPanel mainPanel = new JPanel();
-		mainPanel.add(scrollPane);
-		mainPanel.add(messageBox);
-		mainPanel.add(sendButton);
+		JPanel subPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		subPanel.setLayout(new BorderLayout());
+		mainPanel.add("Center", scrollPane);
+		subPanel.add("Center", messageBox);
+		subPanel.add("East", sendButton);
+		subPanel.add("South", hintButton);
 		sendButton.addActionListener(new SendButtonActivationListener());
+		hintButton.addActionListener(new helpButtonActivationListener());
+		messageBox.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+		frame.getContentPane().add(BorderLayout.SOUTH, subPanel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -174,11 +184,25 @@ public class SimpleChatClient {
 			if (text.length() > 0) {
 				System.out.println("messageBox.getText()1 = " + text);
 
-				send(text);
+				try {
+					send(text);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 	
 				messageBox.setText("");
 			}
 			messageBox.requestFocus();
+		}
+	}
+	
+public class helpButtonActivationListener implements ActionListener {
+		
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
 		}
 	}
 

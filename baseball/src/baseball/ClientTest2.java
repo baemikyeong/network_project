@@ -25,21 +25,12 @@ public class ClientTest2 {
 	public static void main(String[] args) {
 		Socket socket = null;
 
-		if (args.length != 1) {
-			System.out.println("Usage: Classname ServerName");
-			System.exit(1);
-		}
-
-		eServer = args[0];//argument로 서버 IP와 포트를 받음
-
 		try {
 
 			System.out.println("서버와 연결 중 ...");
-			choiceLogic(eServer);
-		//	socket = new Socket("localhost", 9000);
 			socket = new Socket("localhost", 9000);
 			System.out.println("서버에서 확인 중 ");
-
+			SimpleChatClient client1 = new SimpleChatClient("localhost", 8888);
 			InputStream is = socket.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			OutputStream os = socket.getOutputStream();
@@ -100,17 +91,6 @@ public class ClientTest2 {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void choiceLogic(String ip) {//(ePort,eServer);
-		if (ip.equals("IP address")) {
-			ip = "localhost";
-		}
-		else{
-			System.out.println("invalid serverIP");
-			return;
-		}
-
 	}
 
 }

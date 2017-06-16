@@ -201,8 +201,7 @@ class EchoThread extends Thread{
 		serverSocketChannel.bind(new InetSocketAddress(port));
 		startAcceptingNewClient();
 		setUpGUI();
-		String addr = InetAddress.getLocalHost().getHostAddress();
-		incoming.append(addr);
+
 	//	readConsoleInput(this);
 	}
 
@@ -219,11 +218,16 @@ class EchoThread extends Thread{
 		messageBox = new JTextField(20);
 		broadcastButton = new JButton("Broadcast");
 		JPanel mainPanel = new JPanel();
-		mainPanel.add(scrollPane);
-		mainPanel.add(messageBox);
-		mainPanel.add(broadcastButton);
+		JPanel subPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		subPanel.setLayout(new BorderLayout());
+		mainPanel.add("Center", scrollPane);
+		subPanel.add("Center", messageBox);
+		subPanel.add("East", broadcastButton);
 		broadcastButton.addActionListener(new SendButtonActivationListener());
+		messageBox.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+		frame.getContentPane().add(BorderLayout.SOUTH, subPanel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -238,7 +242,8 @@ class EchoThread extends Thread{
 			if (text.length() > 0) {
 				System.out.println("messageBox.getText()1 = " + text);
 
-				incoming.append(text);
+				incoming.append("server : " + text);
+				incoming.append("\n");
 				broadcastMessage(text);
 				messageBox.setText("");
 			}
@@ -267,14 +272,16 @@ class EchoThread extends Thread{
 				try {
 					String message = "[서버 연결 성공:" + serverSocketChannel.getLocalAddress()+"]";
 					System.out.println(message);
+					incoming.append(message);
+					incoming.append("\n");
 				} catch (IOException e) {}
 
 				// 클라이언트 생성 ->객체 저장
 				Client client = new Client(socketChannel);
 				connections.add(client); 
 				System.out.println("[연결된 갯수:" + connections.size() + "]");
-				
-				
+				incoming.append("[연결된 갯수:" + connections.size() + "]");
+				incoming.append("\n");
 				serverSocketChannel.accept(null, this);// 계속해서 리슨
 			}
 
@@ -321,12 +328,14 @@ class EchoThread extends Thread{
 						String message = "[ 요청 처리 : " + socketChannel.getRemoteAddress() + ": "+ Thread.currentThread().getName() + "]";
 					
 						System.out.println(message);
-							
+						
 						attachment.flip();
 						
 						Charset charset = Charset.forName("utf-8");
 						String data = charset.decode(attachment).toString();// 문자열변화
 
+						incoming.append(data);
+						incoming.append("\n");
 						// 모든 클라이언트에 보내기
 						for (Client client : connections) {
 							client.send(data);
@@ -349,6 +358,8 @@ class EchoThread extends Thread{
 						String message = "[클라이언트 통신 안됨: " + socketChannel.getRemoteAddress() + ": "
 								+ Thread.currentThread().getName() + "]";
 					 System.out.println(message);
+					 incoming.append(message);
+						incoming.append("\n");
 						connections.remove(Client.this);
 						socketChannel.close();
 
@@ -376,6 +387,8 @@ class EchoThread extends Thread{
 						String message = "[클라이언트 통신 안됨: " + socketChannel.getRemoteAddress() + ": "
 								+ Thread.currentThread().getName() + "]";
 						System.out.println(message);
+						incoming.append(message);
+						incoming.append("\n");
 						connections.remove(Client.this);
 						socketChannel.close();
 					} catch (IOException e) {
@@ -392,7 +405,7 @@ class EchoThread extends Thread{
 		System.out.println("SimpleChatServer.broadcastMessage");
 		
 		for (Client client : connections) {
-			client.send(message);
+			client.send("server :" + message);
 		}
 		
 	}

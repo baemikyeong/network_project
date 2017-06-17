@@ -96,19 +96,7 @@ public class ServerTest2 {
 class EchoThread extends Thread {
 
 	Socket socket;
-<<<<<<< HEAD
 
-	InputStream is = null;
-	BufferedReader br = null;
-
-	OutputStream os = null;
-	PrintWriter pw = null;
-
-	EchoThread() {
-	}
-
-	EchoThread(Socket socket) throws NotBoundException, RemoteException {
-=======
 	
 	InputStream is=null;
 	BufferedReader br=null;
@@ -117,7 +105,7 @@ class EchoThread extends Thread {
 	PrintWriter pw=null;
 	EchoThread(){}
 	EchoThread(Socket socket) throws NotBoundException{
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 		this.socket = socket;
 		try {
 			// 3. 소켓으로 부터 송수신을 위한 i/o stream 을 얻기
@@ -143,7 +131,8 @@ class EchoThread extends Thread {
 			int x, y;
 			System.out.println("rmi call   ");
 			String a = socket.getInetAddress().getHostAddress();
-			int s = socket.getPort();
+			System.out.println("a:"+a);
+			//int s = socket.getPort();
 			String b = "Game";
 			Game c = (Game) Naming.lookup("rmi://" + a + "/" + b);
 			c.randomInt();
@@ -227,14 +216,7 @@ class SimpleChatServer {
 		serverSocketChannel.bind(new InetSocketAddress(port));
 		startAcceptingNewClient();
 		setUpGUI();
-<<<<<<< HEAD
-		String addr = InetAddress.getLocalHost().getHostAddress();
-		incoming.append(addr);
-		// readConsoleInput(this);
-=======
 
-	//	readConsoleInput(this);
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 	}
 
 	public void setUpGUI() {
@@ -299,25 +281,17 @@ class SimpleChatServer {
 				try {
 					String message = "[서버 연결 성공:" + serverSocketChannel.getLocalAddress() + "]";
 					System.out.println(message);
-<<<<<<< HEAD
-				} catch (IOException e) {
-				}
-=======
 					incoming.append(message);
 					incoming.append("\n");
 				} catch (IOException e) {}
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
-
 				// 클라이언트 생성 ->객체 저장
 				Client client = new Client(socketChannel);
 				connections.add(client);
 				System.out.println("[연결된 갯수:" + connections.size() + "]");
-<<<<<<< HEAD
 
-=======
 				incoming.append("[연결된 갯수:" + connections.size() + "]");
 				incoming.append("\n");
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 				serverSocketChannel.accept(null, this);// 계속해서 리슨
 			}
 
@@ -364,17 +338,12 @@ class SimpleChatServer {
 								+ Thread.currentThread().getName() + "]";
 
 						System.out.println(message);
-<<<<<<< HEAD
 
-=======
-						
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 						attachment.flip();
 
 						Charset charset = Charset.forName("utf-8");
 						String data = charset.decode(attachment).toString();// 문자열변화
 
-<<<<<<< HEAD
 						if (data.equals("please,start the receiver")) {
 							for (Client client : connections) {
 								client.send("please,restart the receiver");
@@ -383,14 +352,10 @@ class SimpleChatServer {
 							for (Client client : connections) {
 								client.send("Set, client Server");
 							}
-=======
 						incoming.append(data);
 						incoming.append("\n");
-						// 모든 클라이언트에 보내기
-						for (Client client : connections) {
-							client.send(data);
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 						}
+						// 모든 클라이언트에 보내기
 						else {
 
 							// 모든 클라이언트에 보내기
@@ -414,13 +379,9 @@ class SimpleChatServer {
 					try {
 						String message = "[클라이언트 통신 안됨: " + socketChannel.getRemoteAddress() + ": "
 								+ Thread.currentThread().getName() + "]";
-<<<<<<< HEAD
-						System.out.println(message);
-=======
 					 System.out.println(message);
 					 incoming.append(message);
 						incoming.append("\n");
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
 						connections.remove(Client.this);
 						socketChannel.close();
 

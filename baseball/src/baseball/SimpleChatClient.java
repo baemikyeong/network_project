@@ -174,10 +174,9 @@ public class SimpleChatClient {
 	public void setUpGUI() {
 		System.out.println("SimpleChatClient.setUpGUI");
 		JFrame frame = new JFrame();
-<<<<<<< HEAD
+
 		incoming = new JTextArea(15, 30);
-=======
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 		incoming.setLineWrap(true);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
@@ -188,12 +187,6 @@ public class SimpleChatClient {
 		sendButton = new JButton("Send");
 		hintButton = new JButton("Hint");
 		JPanel mainPanel = new JPanel();
-<<<<<<< HEAD
-		mainPanel.add(scrollPane);
-		mainPanel.add(messageBox);
-
-		mainPanel.add(sendButton);
-=======
 
 		JPanel subPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
@@ -203,7 +196,7 @@ public class SimpleChatClient {
 		subPanel.add("East", sendButton);
 		subPanel.add("South", hintButton);
 
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 		sendButton.addActionListener(new SendButtonActivationListener());
 		hintButton.addActionListener(new HintButtonActivationListener());
 		messageBox.addActionListener(new SendButtonActivationListener());
@@ -229,10 +222,6 @@ public class SimpleChatClient {
 			if (text.length() > 0) {
 				System.out.println("messageBox.getText()1 = " + text);
 
-<<<<<<< HEAD
-				send(text);
-
-=======
 				try {
 					send(text);
 				} catch (IOException e1) {
@@ -240,25 +229,26 @@ public class SimpleChatClient {
 					e1.printStackTrace();
 				}
 	
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 				messageBox.setText("");
 			}
 			messageBox.requestFocus();
 		}
 	}
-<<<<<<< HEAD
 
-	public class HintButtonActivationListener implements ActionListener {
-=======
-	
 
 public class HintButtonActivationListener implements ActionListener {
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Hint버튼 누르면 수행
 			selfChecking = false;// 도움을 청하는 sender
-			send("please,start the receiver");
+			try {
+				send("please,start the receiver");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
 		//	Server.main(null);
 

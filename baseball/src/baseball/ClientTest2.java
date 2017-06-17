@@ -22,20 +22,16 @@ public class ClientTest2 {
 	JTextField address = new JTextField("IP address");
 	JTextField port = new JTextField("Port");
 
-	public static void main(String[] args) {
+	public static void main(int[] args) {
 		Socket socket = null;
-		String atr = args[0];
+		int atr = args[0];
 		try {
 
 			System.out.println("서버와 연결 중 ...");
 			
 			socket = new Socket("localhost", 9000);
 			System.out.println("서버에서 확인 중 ");
-<<<<<<< HEAD
-		
-=======
-			//SimpleChatClient client1 = new SimpleChatClient("localhost", 8888);
->>>>>>> e5305ffc1fb70b96b5f52931094401922c385fab
+
 			InputStream is = socket.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			OutputStream os = socket.getOutputStream();
@@ -44,12 +40,14 @@ public class ClientTest2 {
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("rmi서버에 올리는 중  ");
 			String a = socket.getLocalAddress().getHostAddress();
-			int socket_port = socket.getLocalPort();
+		//	int socket_port = socket.getLocalPort();
+			//System.out.println("a:"+socket_port);
 			String b = "Game";
 			Game zz = new GameImpl(); // 야구게임 클래스 객체 생성
-			LocateRegistry.createRegistry(socket_port);
-			
-			Naming.rebind("rmi://" + a + ":" + Integer.toString(socket_port) +"/" + b, zz);
+			LocateRegistry.createRegistry(atr);
+			System.out.println("Not bound");
+			Naming.rebind("rmi://" + a + ":" + Integer.toString(atr) +"/" + b, zz);
+			System.out.println("a:bind OK");
 
 			String str = "", str1 = "";
 			System.out.println("게임을 시작하겠습니다 ");

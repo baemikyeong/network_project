@@ -18,10 +18,12 @@ public class SimpleChatClient {
 	private JTextArea incoming;
 	private JTextField messageBox;
 	private JButton sendButton;
+	private JButton hintButton;
 	private BufferedReader reader;
 	private PrintWriter writer;
+	private boolean selfChecking;
 
-	AsynchronousChannelGroup channelGroup; // 비동기 채널 그룹 필드 선언
+	AsynchronousChannelGroup channelGroup;
 	AsynchronousSocketChannel socketChannel;
 	static String sAddr = "localhost";
 	static int Port = -1;
@@ -29,6 +31,8 @@ public class SimpleChatClient {
 	public SimpleChatClient(String address, int cPort) {
 		this.Port = cPort;
 		this.sAddr = address;
+		selfChecking = true;
+
 		setUpGUI();
 		establishConnection();
 		System.out.println("Setup Finished");
@@ -38,35 +42,32 @@ public class SimpleChatClient {
 		try {
 			System.out.println("SimpleChatClient.establishConnection");
 			channelGroup = AsynchronousChannelGroup.withFixedThreadPool(Runtime.getRuntime().availableProcessors(),
-					Executors.defaultThreadFactory()); // CPU 코어 수만큼 스레드를 관리하는
-														// 스레드풀 생성하고 이것을 이용하는
-														// 비동기 채널 그룹 생성.
-			socketChannel = AsynchronousSocketChannel.open(channelGroup);// 비동기소켓채널생성
+					Executors.defaultThreadFactory()); 
+			socketChannel = AsynchronousSocketChannel.open(channelGroup);
 
 			socketChannel.connect(new InetSocketAddress(sAddr, Port), null, new CompletionHandler<Void, Void>() {
 				@Override
 				public void completed(Void result, Void attachment) {
-					
+
 					try {
-							System.out.println("[연결 완료: " + socketChannel.getRemoteAddress() + "]");
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					receive(); // 서버에서 보낸 데이터 받기!!!!!!!!
-					
+						System.out.println("[connection success: " + socketChannel.getRemoteAddress() + "]");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					receive(); 
+
 				}
-				
+
 				@Override
 				public void failed(Throwable e, Void attachment) {
-					System.out.println("[서버 통신 안됨]");
+					System.out.println("[fail to connect server]");
 					if (socketChannel.isOpen()) {
 						try {
-							System.out.println("[연결 끊음]");
-						
+							System.out.println("[not connected]");
+
 							if (channelGroup != null && !channelGroup.isShutdown()) {
-								channelGroup.shutdownNow(); // 비동기 채널 그룹에 포함된 모든
-															// 비동기 채널 닫음.
+								channelGroup.shutdownNow(); 
 							}
 						} catch (IOException i) {
 						}
@@ -80,33 +81,53 @@ public class SimpleChatClient {
 
 	public void receive() {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(100);
-		
 		socketChannel.read(byteBuffer, byteBuffer, new CompletionHandler<Integer, ByteBuffer>() {
 			@Override
 			public void completed(Integer result, ByteBuffer attachment) {
 				try {
 					attachment.flip();
-					
+
 					Charset charset = Charset.forName("utf-8");
 					String data = charset.decode(attachment).toString();
-					System.out.println("[From Server to Client : ] " + data);
+	/*				if (data.equals("please,restart the receiver")) {
+						if (selfChecking == true) {
+							if (Server.checking == true){
+								Server.main(null);
+							    send("I am ready"); 
+							}
+							
+							/*
+							 * Server s = new Server(); s.main(null);
+							 */
+							//Client.startImageSend();
+			/*			}else if(data.equals("Set, client Server")) {
+							if(selfChecking==false){
+								Client.startImageSend();
+							}
+							else {
+								return;
+							}
+						}
+						
+					}*/
+					System.out.println("From Server to Client :" + data);
 					incoming.append(data);
 					incoming.append("\n");
 					ByteBuffer byteBuffer = ByteBuffer.allocate(100);
-					socketChannel.read(byteBuffer, byteBuffer, this);//receive() 재호출한구얌
-				
+					socketChannel.read(byteBuffer, byteBuffer, this);// receive()
+																		
+
 				} catch (Exception e) {
 				}
 			}
 
 			@Override
 			public void failed(Throwable exc, ByteBuffer attachment) {
-				System.out.println("[메세지 읽을 수 없또]");
+				System.out.println("[cannot read the message]");
 				try {
-					System.out.println("[연결 끊음]");
+					System.out.println("[not connected]");
 					if (channelGroup != null && !channelGroup.isShutdown()) {
-						channelGroup.shutdownNow(); // 비동기 채널 그룹에 포함된 모든 비동기 채널
-													// 닫음.
+						channelGroup.shutdownNow();
 					}
 				} catch (IOException e) {
 				}
@@ -115,24 +136,24 @@ public class SimpleChatClient {
 
 	}
 
-	public void send(String data) {
+	public void send(String data) throws IOException {
+		data = "[" + socketChannel.getLocalAddress().toString() + "]" + data;
 		Charset charset = Charset.forName("utf-8");
 		ByteBuffer byteBuffer = charset.encode(data);
-		
+
 		socketChannel.write(byteBuffer, null, new CompletionHandler<Integer, Void>() {
 			@Override
 			public void completed(Integer result, Void attachment) {
-				System.out.println("[보내기 완료]");
+				System.out.println("[send success]");
 			}
 
 			@Override
 			public void failed(Throwable exc, Void attachment) {
-				System.out.println("[보내기 실패]");
+				System.out.println("[send fail]");
 				try {
-					System.out.println("[연결 끊음]");
+					System.out.println("[disconnected]");
 					if (channelGroup != null && !channelGroup.isShutdown()) {
-						channelGroup.shutdownNow(); // 비동기 채널 그룹에 포함된 모든 비동기 채널
-													// 닫음.
+						channelGroup.shutdownNow(); 
 					}
 				} catch (IOException e) {
 				}
@@ -142,9 +163,10 @@ public class SimpleChatClient {
 	}
 
 	public void setUpGUI() {
-		System.out.println("SimpleChatClient.setUpGUI");
 		JFrame frame = new JFrame();
-		incoming = new JTextArea(15, 50);
+
+		incoming = new JTextArea(15, 30);
+
 		incoming.setLineWrap(true);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
@@ -153,32 +175,71 @@ public class SimpleChatClient {
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		messageBox = new JTextField(20);
 		sendButton = new JButton("Send");
+		hintButton = new JButton("Hint");
 		JPanel mainPanel = new JPanel();
-		mainPanel.add(scrollPane);
-		mainPanel.add(messageBox);
-		mainPanel.add(sendButton);
+
+		JPanel subPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		subPanel.setLayout(new BorderLayout());
+		mainPanel.add("Center", scrollPane);
+		subPanel.add("Center", messageBox);
+		subPanel.add("East", sendButton);
+		subPanel.add("South", hintButton);
+
+
 		sendButton.addActionListener(new SendButtonActivationListener());
+		hintButton.addActionListener(new HintButtonActivationListener());
+		messageBox.addActionListener(new SendButtonActivationListener());
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+		frame.getContentPane().add(BorderLayout.SOUTH, subPanel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+		hintButton = new JButton("Hint");
+		mainPanel.add(hintButton);
+		hintButton.setVisible(true);
+		hintButton.setBounds(125, 15, 50, 50);
+		hintButton.addActionListener(new HintButtonActivationListener());
+
 	}
 
 	public class SendButtonActivationListener implements ActionListener {
-		
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String text = messageBox.getText();
 			if (text.length() > 0) {
 				System.out.println("messageBox.getText()1 = " + text);
 
-				send(text);
+				try {
+					send(text);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 	
+
 				messageBox.setText("");
 			}
 			messageBox.requestFocus();
+		}
+	}
+
+
+public class HintButtonActivationListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			selfChecking = false;
+			try {
+				send("please,start the receiver");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		}
 	}
 

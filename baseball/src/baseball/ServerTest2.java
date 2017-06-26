@@ -370,8 +370,13 @@ class SimpleChatServer {
 					try {
 						String message = "[클라이언트 통신 안됨: " + socketChannel.getRemoteAddress() + ": "
 								+ Thread.currentThread().getName() + "]";
+<<<<<<< HEAD
 						System.out.println(message);
 						incoming.append(message);
+=======
+					 System.out.println(message);
+					 incoming.append(message);
+>>>>>>> e43cf40b1d692ba7bbd0f582b86552e8b2ad27e3
 						incoming.append("\n");
 						connections.remove(Client.this);
 						socketChannel.close();
@@ -412,6 +417,7 @@ class SimpleChatServer {
 
 		}
 	}
+<<<<<<< HEAD
 
 	public void broadcastMessage(String message) {
 		for (Client client : connections) {
@@ -421,3 +427,22 @@ class SimpleChatServer {
 	}
 
 }
+=======
+
+	public void broadcastMessage(String message) {
+
+		System.out.println("SimpleChatServer.broadcastMessage");
+
+		for (Client client : connections) {
+			client.send("server :" + message);
+		}
+
+	}
+
+	/*
+	 * public boolean ImageCommunicationCheck(){ return false;
+	 * 
+	 * }
+	 */
+}
+>>>>>>> e43cf40b1d692ba7bbd0f582b86552e8b2ad27e3
